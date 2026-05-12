@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Morgan's Laws</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { background-color: #f8fafc; color: #334155; }
+        
+        /* Top-Accent Lines for clean card differentiation */
+        .top-accent-blue { border-top: 4px solid #3b82f6; }
+        .top-accent-purple { border-top: 4px solid #8b5cf6; }
+        .top-accent-green { border-top: 4px solid #10b981; }
+        .top-accent-red { border-top: 4px solid #ef4444; }
+        
+        /* Locked state for textarea */
+        .locked { background-color: #f1f5f9; cursor: not-allowed; border-color: #e2e8f0; color: #64748b; }
+        
+        /* Native Tailwind Custom Toggle Styling applied directly in HTML via peer classes */
+        
+        /* Circuit State Transitions */
+        .state-true-bg { background-color: #ecfdf5; border-color: #22c55e; color: #166534; box-shadow: 0 2px 10px rgba(34, 197, 94, 0.15); }
+        .state-false-bg { background-color: #f8fafc; border-color: #cbd5e1; color: #64748b; }
+        
+        /* Smooth transitions for all dynamic elements */
+        .gate-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="antialiased font-sans text-lg leading-loose">
+
+    <!-- Header Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Left: Topic Name -->
+            <div class="font-bold text-xl text-blue-700 flex items-center gap-3">
+                <div class="p-2 bg-blue-50 rounded-lg">
+                    <i class="fa-solid fa-microchip text-blue-600"></i>
+                </div>
+                <span data-i18n="navTitle">De Morgan's Laws</span>
+            </div>
+            <!-- Right: Utilities -->
+            <div class="flex items-center gap-6">
+                <div class="text-gray-400 font-medium text-sm hidden md:block" data-i18n="navAuthor">Created by Sam Li</div>
+                <div class="h-6 w-px bg-gray-200 hidden md:block"></div>
+                <button id="langToggle" class="text-blue-600 font-semibold hover:text-blue-800 transition flex items-center bg-blue-50 px-4 py-2 rounded-xl border border-blue-100 hover:bg-blue-100">
+                    <i class="fa-solid fa-language mr-2"></i><span id="langText">繁體中文</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-5xl mx-auto px-6 py-12 flex flex-col gap-10">
+
+        <!-- Global Welcome Banner -->
+        <section class="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-2xl p-8 md:p-10 shadow-md">
+            <h1 class="text-3xl font-bold mb-4 flex items-center gap-3">
+                <i class="fa-solid fa-bullseye text-blue-200"></i>
+                <span data-i18n="objTitle">Learning Objective</span>
+            </h1>
+            <p class="text-blue-50 text-lg md:text-xl leading-relaxed" data-i18n="objDesc">
+                In this module, we will explore De Morgan's Laws. You will learn to intuitively understand why a negated AND gate is logically equivalent to inverted inputs feeding into an OR gate, using real-world analogies and visual structural logic.
+            </p>
+        </section>
+
+        <!-- Concept Explanation Card -->
+        <section class="bg-white rounded-2xl p-8 md:p-12 shadow-sm top-accent-blue">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                <i class="fa-solid fa-lightbulb text-yellow-500 mr-3 text-3xl"></i>
+                <span data-i18n="conceptTitle">Concept Explanation: The Noodle Analogy</span>
+            </h2>
+            <p class="mb-6 text-gray-700" data-i18n="conceptP1">
+                Students often memorize the Truth Table for basic Logic Gates like AND, OR, and NOT. However, visualizing compound logic can be tricky. Let's use an everyday analogy to decode De Morgan's Law:
+            </p>
+            
+            <div class="text-center text-xl md:text-2xl font-bold text-blue-800 my-8 bg-blue-50/50 py-8 rounded-2xl border border-blue-100 shadow-inner overflow-x-auto">
+                \[ \text{NOT} (A \text{ AND } B) = (\text{NOT } A) \text{ OR } (\text{NOT } B) \]
+            </div>
+            
+            <div class="bg-gray-50 p-6 md:p-8 rounded-2xl border border-gray-200 mb-8">
+                <ul class="list-disc pl-6 space-y-4 text-gray-700">
+                    <li data-i18n="conceptLi1"><strong>Condition A:</strong> The noodles are Spicy.</li>
+                    <li data-i18n="conceptLi2"><strong>Condition B:</strong> The noodles are Hot.</li>
+                </ul>
+            </div>
+            
+            <p class="mb-6 text-gray-700" data-i18n="conceptP2">
+                Imagine you say: <em>"I refuse to eat noodles that are BOTH spicy AND hot."</em><br>
+                In Boolean Algebra, this is written as: <strong>NOT (A AND B)</strong>. This means you are okay with noodles that are just spicy, just hot, or neither. You only reject them if they are <em>both</em>.
+            </p>
+            <p class="text-gray-700 p-6 bg-blue-50/50 rounded-xl border border-blue-100" data-i18n="conceptP3">
+                Now, rephrase that exact same preference: <em>"As long as the noodles are NOT spicy, OR they are NOT hot, I will eat them."</em><br>
+                This translates to: <strong>(NOT A) OR (NOT B)</strong>. 
+                Logically, these two statements dictate the exact same eating behavior!
+            </p>
+        </section>
+
+        <!-- Interactive Logic Simulator -->
+        <section class="bg-white rounded-2xl p-8 md:p-12 shadow-sm top-accent-purple">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800 flex items-center">
+                <i class="fa-solid fa-sliders text-purple-500 mr-3 text-3xl"></i>
+                <span data-i18n="simTitle">Interactive Logic Simulator</span>
+            </h2>
+            <p class="mb-10 text-gray-600" data-i18n="simDesc">
+                Toggle the inputs below and trace the logical flow. Green indicates True and Gray indicates False. Notice how the intermediate values change at each gate, yet the final outputs of both circuits always remain identical.
+            </p>
+
+            <!-- Input Toggles -->
+            <div class="flex flex-col sm:flex-row gap-6 md:gap-10 justify-center mb-12 bg-purple-50/50 p-8 rounded-2xl border border-purple-100 shadow-inner">
+                <!-- Toggle A -->
+                <div class="flex items-center justify-between sm:justify-start gap-4 bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 w-full sm:w-auto">
+                    <span class="font-bold text-gray-700" data-i18n="simInputA">Input A (Spicy):</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleA" class="sr-only peer">
+                        <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
+                    </label>
+                    <span id="valA" class="font-mono text-lg font-bold text-gray-400 w-12 text-center">False</span>
+                </div>
+                <!-- Toggle B -->
+                <div class="flex items-center justify-between sm:justify-start gap-4 bg-white px-6 py-4 rounded-xl shadow-sm border border-gray-100 w-full sm:w-auto">
+                    <span class="font-bold text-gray-700" data-i18n="simInputB">Input B (Hot):</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="toggleB" class="sr-only peer">
+                        <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500 shadow-inner"></div>
+                    </label>
+                    <span id="valB" class="font-mono text-lg font-bold text-gray-400 w-12 text-center">False</span>
+                </div>
+            </div>
+
+            <!-- Circuits Container (Responsive Flow instead of horizontal scrolling) -->
+            <div class="flex flex-col gap-12">
+                
+                <!-- Circuit 1: NOT (A AND B) -->
+                <div class="border border-gray-200 rounded-2xl p-6 md:p-10 relative bg-white shadow-sm flex flex-col items-center gap-6">
+                    <div class="absolute -top-4 bg-purple-100 text-purple-800 font-mono text-sm px-6 py-1.5 rounded-full font-bold shadow-sm border border-purple-200">Circuit 1: NOT (A AND B)</div>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 w-full mt-4">
+                        
+                        <!-- Inputs Flow -->
+                        <div class="flex flex-row md:flex-col justify-center gap-6 md:gap-8 w-full md:w-auto">
+                            <!-- Node A -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <span class="font-mono font-bold text-lg text-gray-700">A</span>
+                                    <span id="c1-in-a-val" class="text-sm font-bold text-gray-400 w-10 text-center">False</span>
+                                </div>
+                                <i id="c1-arr-a" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-gray-300 gate-transition md:hidden block"></i>
+                            </div>
+                            <!-- Node B -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <span class="font-mono font-bold text-lg text-gray-700">B</span>
+                                    <span id="c1-in-b-val" class="text-sm font-bold text-gray-400 w-10 text-center">False</span>
+                                </div>
+                                <i id="c1-arr-b" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-gray-300 gate-transition md:hidden block"></i>
+                            </div>
+                        </div>
+
+                        <!-- Connector Arrows (Desktop) -->
+                        <div class="hidden md:flex flex-col justify-between h-24">
+                            <i id="c1-arr-a-desk" class="fa-solid fa-arrow-right text-2xl text-gray-300 gate-transition"></i>
+                            <i id="c1-arr-b-desk" class="fa-solid fa-arrow-right text-2xl text-gray-300 gate-transition"></i>
+                        </div>
+                        
+                        <!-- AND Gate -->
+                        <div id="c1-gate-and" class="state-false-bg flex flex-col items-center justify-center p-5 rounded-2xl border-[3px] gate-transition w-36 shadow-sm">
+                            <span class="font-bold tracking-wide" data-i18n="gateAnd">AND Gate</span>
+                            <div class="mt-3 bg-white px-4 py-1.5 rounded-xl border border-gray-200 shadow-inner">
+                                <span id="c1-val-and" class="font-mono text-lg font-bold">False</span>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <i id="c1-arr-mid" class="fa-solid fa-arrow-down md:fa-arrow-right text-3xl text-gray-300 gate-transition"></i>
+
+                        <!-- NOT Gate -->
+                        <div id="c1-gate-not" class="state-true-bg flex flex-col items-center justify-center p-5 rounded-2xl border-[3px] gate-transition w-36 shadow-sm">
+                            <span class="font-bold tracking-wide" data-i18n="gateNot">NOT Gate</span>
+                            <div class="mt-3 bg-white px-4 py-1.5 rounded-xl border border-gray-200 shadow-inner">
+                                <span id="c1-val-not" class="font-mono text-lg font-bold text-green-600">True</span>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <i id="c1-arr-out" class="fa-solid fa-arrow-down md:fa-arrow-right text-3xl text-green-500 gate-transition"></i>
+
+                        <!-- Final Output -->
+                        <div id="c1-output" class="state-true-bg flex flex-col items-center justify-center p-6 rounded-3xl border-[3px] gate-transition w-48 shadow-md relative overflow-hidden">
+                            <span class="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2 text-center" data-i18n="output1Lbl">Output:<br>NOT (A AND B)</span>
+                            <span id="c1-val-out" class="font-mono text-2xl font-bold text-green-700">True</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 2: (NOT A) OR (NOT B) -->
+                <div class="border border-gray-200 rounded-2xl p-6 md:p-10 relative bg-white shadow-sm flex flex-col items-center gap-6">
+                    <div class="absolute -top-4 bg-purple-100 text-purple-800 font-mono text-sm px-6 py-1.5 rounded-full font-bold shadow-sm border border-purple-200">Circuit 2: (NOT A) OR (NOT B)</div>
+                    
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 w-full mt-4">
+                        
+                        <!-- Inputs & First Stage NOT Gates Flow -->
+                        <div class="flex flex-row md:flex-col justify-center gap-6 md:gap-8 w-full md:w-auto">
+                            <!-- Branch A -->
+                            <div class="flex flex-col md:flex-row items-center gap-3">
+                                <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <span class="font-mono font-bold text-lg text-gray-700">A</span>
+                                    <span id="c2-in-a-val" class="text-sm font-bold text-gray-400 w-10 text-center">False</span>
+                                </div>
+                                <i id="c2-arr-a-in" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-gray-300 gate-transition"></i>
+                                <div id="c2-gate-nota" class="state-true-bg p-3 rounded-xl border-[3px] gate-transition flex flex-col items-center w-24 shadow-sm">
+                                    <span class="font-bold text-xs" data-i18n="gateNot">NOT</span>
+                                    <span id="c2-val-nota" class="font-mono font-bold text-sm bg-white px-2 py-1 rounded-md mt-2 shadow-inner border border-gray-100 text-green-600">True</span>
+                                </div>
+                                <i id="c2-arr-a-out" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-green-500 gate-transition md:hidden block"></i>
+                            </div>
+                            <!-- Branch B -->
+                            <div class="flex flex-col md:flex-row items-center gap-3">
+                                <div class="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                                    <span class="font-mono font-bold text-lg text-gray-700">B</span>
+                                    <span id="c2-in-b-val" class="text-sm font-bold text-gray-400 w-10 text-center">False</span>
+                                </div>
+                                <i id="c2-arr-b-in" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-gray-300 gate-transition"></i>
+                                <div id="c2-gate-notb" class="state-true-bg p-3 rounded-xl border-[3px] gate-transition flex flex-col items-center w-24 shadow-sm">
+                                    <span class="font-bold text-xs" data-i18n="gateNot">NOT</span>
+                                    <span id="c2-val-notb" class="font-mono font-bold text-sm bg-white px-2 py-1 rounded-md mt-2 shadow-inner border border-gray-100 text-green-600">True</span>
+                                </div>
+                                <i id="c2-arr-b-out" class="fa-solid fa-arrow-down md:fa-arrow-right text-xl text-green-500 gate-transition md:hidden block"></i>
+                            </div>
+                        </div>
+
+                        <!-- Connector Arrows (Desktop) -->
+                        <div class="hidden md:flex flex-col justify-between h-24">
+                            <i id="c2-arr-a-out-desk" class="fa-solid fa-arrow-right text-2xl text-green-500 gate-transition"></i>
+                            <i id="c2-arr-b-out-desk" class="fa-solid fa-arrow-right text-2xl text-green-500 gate-transition"></i>
+                        </div>
+                        
+                        <!-- OR Gate -->
+                        <div id="c2-gate-or" class="state-true-bg flex flex-col items-center justify-center p-5 rounded-2xl border-[3px] gate-transition w-36 shadow-sm">
+                            <span class="font-bold tracking-wide" data-i18n="gateOr">OR Gate</span>
+                            <div class="mt-3 bg-white px-4 py-1.5 rounded-xl border border-gray-200 shadow-inner">
+                                <span id="c2-val-or" class="font-mono text-lg font-bold text-green-600">True</span>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <i id="c2-arr-out" class="fa-solid fa-arrow-down md:fa-arrow-right text-3xl text-green-500 gate-transition"></i>
+
+                        <!-- Final Output -->
+                        <div id="c2-output" class="state-true-bg flex flex-col items-center justify-center p-6 rounded-3xl border-[3px] gate-transition w-48 shadow-md">
+                            <span class="font-bold text-xs text-gray-500 uppercase tracking-wider mb-2 text-center" data-i18n="output2Lbl">Output:<br>(NOT A) OR (NOT B)</span>
+                            <span id="c2-val-out" class="font-mono text-2xl font-bold text-green-700">True</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Misconception & Key Takeaways Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- Misconception Card -->
+            <section class="bg-white rounded-2xl p-8 md:p-10 shadow-sm top-accent-red h-full">
+                <h3 class="text-2xl font-bold mb-6 text-red-600 flex items-center">
+                    <div class="p-2 bg-red-50 rounded-lg mr-3">
+                        <i class="fa-solid fa-circle-exclamation text-red-500 text-2xl"></i>
+                    </div>
+                    <span data-i18n="misTitle">Common Misconception</span>
+                </h3>
+                <p class="text-gray-700" data-i18n="misDesc">
+                    A frequent error is distributing the NOT operator directly without flipping the inner logic gate, mistakenly believing that \(\text{NOT}(A \text{ AND } B)\) equals \((\text{NOT } A) \text{ AND } (\text{NOT } B)\). In our analogy, that would mean you only eat noodles that are <em>neither</em> spicy nor hot—which is much stricter than your actual rule!
+                </p>
+            </section>
+            
+            <!-- Key Takeaways Card -->
+            <section class="bg-white rounded-2xl p-8 md:p-10 shadow-sm top-accent-blue h-full">
+                <h3 class="text-2xl font-bold mb-6 text-blue-700 flex items-center">
+                    <div class="p-2 bg-blue-50 rounded-lg mr-3">
+                        <i class="fa-solid fa-key text-blue-500 text-2xl"></i>
+                    </div>
+                    <span data-i18n="takeTitle">Key Takeaways</span>
+                </h3>
+                <ul class="list-disc pl-5 space-y-4 text-gray-700">
+                    <li data-i18n="takeLi1">When you apply a NOT across an expression in parentheses, the logic operator flips (AND becomes OR, OR becomes AND).</li>
+                    <li data-i18n="takeLi2">Logically equivalent expressions always produce the exact same Truth Table under all conditions.</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- Think & Link Card -->
+        <section class="bg-white rounded-2xl p-8 md:p-10 shadow-sm top-accent-purple">
+            <h3 class="text-2xl font-bold mb-6 text-purple-700 flex items-center">
+                <div class="p-2 bg-purple-50 rounded-lg mr-3">
+                    <i class="fa-solid fa-link text-purple-500 text-2xl"></i>
+                </div>
+                <span data-i18n="thinkTitle">Think & Link</span>
+            </h3>
+            <p class="mb-4 font-bold text-gray-800 text-xl" data-i18n="thinkQTitle">Question:</p>
+            <p class="mb-8 text-gray-700 text-lg" data-i18n="thinkQ">If we apply the same rule to the second part of De Morgan's Law: what is the real-world equivalent of \(\text{NOT}(A \text{ OR } B)\)?</p>
+            
+            <div class="bg-purple-50 p-6 md:p-8 rounded-2xl border border-purple-100">
+                <p class="font-bold text-purple-800 mb-3 text-lg" data-i18n="thinkATitle">Answer & Explanation:</p>
+                <p class="text-gray-800" data-i18n="thinkA">If you say, "I refuse to eat noodles that are spicy OR hot" \(\text{NOT}(A \text{ OR } B)\), you are a very picky eater. It means the noodles must be completely plain. Logically, the noodles must be NOT spicy AND NOT hot: \((\text{NOT } A) \text{ AND } (\text{NOT } B)\). The OR flips to an AND!</p>
+            </div>
+        </section>
+
+        <!-- Mini-Quiz (Self-Assessment) -->
+        <section class="bg-white rounded-2xl p-8 md:p-12 shadow-sm top-accent-green mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-green-700 flex items-center">
+                <div class="p-2 bg-green-50 rounded-lg mr-3">
+                    <i class="fa-solid fa-pen-to-square text-green-600 text-2xl"></i>
+                </div>
+                <span data-i18n="quizTitle">Self-Assessment Mini-Quiz</span>
+            </h2>
+            <p class="mb-8 text-gray-700" data-i18n="quizDesc">
+                A smart home security system triggers an alarm (Output = True) if the door is open (A = True) AND the alarm is armed (B = True). The homeowner wants to write a rule for when the alarm is <strong>SILENT (Output = False)</strong>. 
+                <br><br>
+                Draft your logical expression for the silent state using De Morgan's Law, and explain why it makes sense intuitively.
+            </p>
+            
+            <!-- Thinking Draft Area -->
+            <div class="flex flex-col">
+                <label for="quizDraft" class="font-bold text-gray-700 mb-2" data-i18n="quizDraftLabel">Your Draft Workspace:</label>
+                <textarea id="quizDraft" class="w-full h-40 p-6 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-green-100 focus:border-green-500 mb-6 transition-all placeholder-gray-400 resize-none shadow-sm" placeholder="Draft your thoughts here before checking the answer..."></textarea>
+                
+                <div class="self-start">
+                    <button id="compareBtn" class="bg-green-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition shadow-md flex items-center hover:-translate-y-0.5 transform duration-200">
+                        <i class="fa-solid fa-check-double mr-3"></i> <span data-i18n="quizBtn">Compare with Answer</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Hidden Answer Reveal -->
+            <div id="answerReveal" class="hidden mt-10 pt-10 border-t-2 border-dashed border-gray-200 bg-green-50/70 rounded-b-3xl p-8">
+                <h4 class="text-xl font-bold text-green-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span data-i18n="quizAnsTitle">Detailed Parsing:</span>
+                </h4>
+                <p class="text-gray-800 leading-relaxed" data-i18n="quizAnsP">
+                    The alarm rings when <strong>A AND B</strong> is true. <br>
+                    Therefore, the alarm is silent when <strong>NOT (A AND B)</strong> is true.<br>
+                    According to De Morgan's Law, this is equivalent to <strong>(NOT A) OR (NOT B)</strong>.<br><br>
+                    <strong>Intuitive meaning:</strong> The alarm stays silent as long as the door is closed (NOT A) <em>OR</em> the system is not armed (NOT B). If either of those safe conditions is met, the house is quiet.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Interactivity: Logic Simulator ---
+        const toggleA = document.getElementById('toggleA');
+        const toggleB = document.getElementById('toggleB');
+        
+        // Input Badges
+        const valA = document.getElementById('valA');
+        const valB = document.getElementById('valB');
+        
+        // Node Badges
+        const c1InAVal = document.getElementById('c1-in-a-val');
+        const c1InBVal = document.getElementById('c1-in-b-val');
+        const c2InAVal = document.getElementById('c2-in-a-val');
+        const c2InBVal = document.getElementById('c2-in-b-val');
+
+        // Helper to update container styles based on boolean state
+        function updateStateStyle(element, state) {
+            element.className = element.className.replace(/state-true-bg|state-false-bg/, state ? 'state-true-bg' : 'state-false-bg');
+        }
+
+        // Helper to update text color and content based on state (True/False)
+        function updateTextStyle(element, state, isValueBox = false) {
+            if(isValueBox) {
+                element.className = element.className.replace(/text-green-600|text-gray-500|text-green-700/, state ? 'text-green-600' : 'text-gray-500');
+            } else {
+                element.className = element.className.replace(/text-green-500|text-gray-400|text-green-700/, state ? 'text-green-500' : 'text-gray-400');
+            }
+            element.innerText = state ? "True" : "False";
+        }
+        
+        // Helper to update arrow colors based on state flow
+        function updateArrowStyle(elements, state) {
+            if(!Array.isArray(elements)) elements = [elements];
+            elements.forEach(el => {
+                if(el) {
+                    el.className = el.className.replace(/text-green-500|text-gray-300/, state ? 'text-green-500' : 'text-gray-300');
+                }
+            });
+        }
+
+        function updateSimulator() {
+            const a = toggleA.checked;
+            const b = toggleB.checked;
+            
+            // 1. Update Global Input Labels
+            updateTextStyle(valA, a);
+            updateTextStyle(valB, b);
+            
+            // 2. Update Circuit Entry Node Labels
+            updateTextStyle(c1InAVal, a);
+            updateTextStyle(c1InBVal, b);
+            updateTextStyle(c2InAVal, a);
+            updateTextStyle(c2InBVal, b);
+
+            // --- Circuit 1: NOT (A AND B) ---
+            
+            // Arrows entering AND
+            updateArrowStyle([
+                document.getElementById('c1-arr-a'), 
+                document.getElementById('c1-arr-b'),
+                document.getElementById('c1-arr-a-desk'),
+                document.getElementById('c1-arr-b-desk')
+            ], a && b); // Simplify: Both wires need to be considered. We'll color them individually for accuracy.
+            
+            updateArrowStyle([document.getElementById('c1-arr-a'), document.getElementById('c1-arr-a-desk')], a);
+            updateArrowStyle([document.getElementById('c1-arr-b'), document.getElementById('c1-arr-b-desk')], b);
+
+            // AND Gate Logic
+            const andResult = a && b;
+            updateStateStyle(document.getElementById('c1-gate-and'), andResult);
+            updateTextStyle(document.getElementById('c1-val-and'), andResult, true);
+            
+            // Arrow from AND to NOT
+            updateArrowStyle(document.getElementById('c1-arr-mid'), andResult);
+
+            // NOT Gate Logic
+            const final1 = !andResult;
+            updateStateStyle(document.getElementById('c1-gate-not'), final1);
+            updateTextStyle(document.getElementById('c1-val-not'), final1, true);
+
+            // Out Arrow and Final Box
+            updateArrowStyle(document.getElementById('c1-arr-out'), final1);
+            updateStateStyle(document.getElementById('c1-output'), final1);
+            document.getElementById('c1-val-out').innerText = final1 ? "True" : "False";
+            document.getElementById('c1-val-out').className = final1 ? "font-mono text-2xl font-bold text-green-700" : "font-mono text-2xl font-bold text-gray-500";
+
+
+            // --- Circuit 2: (NOT A) OR (NOT B) ---
+            
+            // Arrows entering NOT A and NOT B
+            updateArrowStyle(document.getElementById('c2-arr-a-in'), a);
+            updateArrowStyle(document.getElementById('c2-arr-b-in'), b);
+
+            // NOT A Logic
+            const notA = !a;
+            updateStateStyle(document.getElementById('c2-gate-nota'), notA);
+            updateTextStyle(document.getElementById('c2-val-nota'), notA, true);
+            updateArrowStyle([document.getElementById('c2-arr-a-out'), document.getElementById('c2-arr-a-out-desk')], notA);
+
+            // NOT B Logic
+            const notB = !b;
+            updateStateStyle(document.getElementById('c2-gate-notb'), notB);
+            updateTextStyle(document.getElementById('c2-val-notb'), notB, true);
+            updateArrowStyle([document.getElementById('c2-arr-b-out'), document.getElementById('c2-arr-b-out-desk')], notB);
+
+            // OR Gate Logic
+            const final2 = notA || notB;
+            updateStateStyle(document.getElementById('c2-gate-or'), final2);
+            updateTextStyle(document.getElementById('c2-val-or'), final2, true);
+
+            // Out Arrow and Final Box
+            updateArrowStyle(document.getElementById('c2-arr-out'), final2);
+            updateStateStyle(document.getElementById('c2-output'), final2);
+            document.getElementById('c2-val-out').innerText = final2 ? "True" : "False";
+            document.getElementById('c2-val-out').className = final2 ? "font-mono text-2xl font-bold text-green-700" : "font-mono text-2xl font-bold text-gray-500";
+        }
+
+        toggleA.addEventListener('change', updateSimulator);
+        toggleB.addEventListener('change', updateSimulator);
+
+        // --- Interactivity: Quiz ---
+        const compareBtn = document.getElementById('compareBtn');
+        const quizDraft = document.getElementById('quizDraft');
+        const answerReveal = document.getElementById('answerReveal');
+
+        compareBtn.addEventListener('click', () => {
+            if (quizDraft.value.trim() === '') {
+                alert(isEnglish ? "Please draft your thoughts before comparing!" : "請在核對答案前先寫下你的想法！");
+                return;
+            }
+            quizDraft.readOnly = true;
+            quizDraft.classList.add('locked');
+            compareBtn.parentElement.classList.add('hidden'); // hide the button wrapper
+            answerReveal.classList.remove('hidden');
+            
+            // Add a smooth scroll to the answer
+            setTimeout(() => {
+                answerReveal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+            
+            if (window.MathJax) MathJax.typesetPromise();
+        });
+
+        // --- Interactivity: Bilingual Translation (i18n) ---
+        let isEnglish = true; // Default language is English
+        
+        const i18nData = {
+            "navTitle": { en: "De Morgan's Laws", zh: "德摩根定律 (De Morgan's Laws)" },
+            "navAuthor": { en: "Created by Sam Li", zh: "作者: Sam Li" },
+            "objTitle": { en: "Learning Objective", zh: "學習目標 (Learning Objective)" },
+            "objDesc": { 
+                en: "In this module, we will explore De Morgan's Laws. You will learn to intuitively understand why a negated AND gate is logically equivalent to inverted inputs feeding into an OR gate, using real-world analogies and visual structural logic.", 
+                zh: "在本單元中，我們將探討德摩根定律 (De Morgan's Laws)。透過生活化的類比與視覺化的結構邏輯，你將能直觀理解為何一個被反相的及閘 (AND Gate)，在邏輯上等同於將反相後的輸入源接上或閘 (OR Gate)。" 
+            },
+            "conceptTitle": { en: "Concept Explanation: The Noodle Analogy", zh: "深度解構：麵條類比 (Concept Explanation)" },
+            "conceptP1": { 
+                en: "Students often memorize the Truth Table for basic Logic Gates like AND, OR, and NOT. However, visualizing compound logic can be tricky. Let's use an everyday analogy to decode De Morgan's Law:", 
+                zh: "學生通常能輕易背誦基本邏輯閘 (Logic Gates) 如 AND、OR 和 NOT 的真值表 (Truth Table)。然而，將複合邏輯視覺化卻不容易。讓我們用一個日常類比來解碼德摩根定律：" 
+            },
+            "conceptLi1": { en: "<strong>Condition A:</strong> The noodles are Spicy.", zh: "<strong>條件 A：</strong> 麵條是辣的 (Spicy)。" },
+            "conceptLi2": { en: "<strong>Condition B:</strong> The noodles are Hot.", zh: "<strong>條件 B：</strong> 麵條是燙的 (Hot)。" },
+            "conceptP2": { 
+                en: "Imagine you say: <em>\"I refuse to eat noodles that are BOTH spicy AND hot.\"</em><br>In Boolean Algebra, this is written as: <strong>NOT (A AND B)</strong>. This means you are okay with noodles that are just spicy, just hot, or neither. You only reject them if they are <em>both</em>.", 
+                zh: "想像你說：<em>「我拒絕吃『既辣又燙』的麵。」</em><br>在布林代數 (Boolean Algebra) 中，這被寫成：<strong>NOT (A AND B)</strong>。這意味著你其實可以接受只是辣的、只是燙的、或是兩者皆非的麵。你唯一拒絕的條件是它們<em>同時</em>具備兩者。" 
+            },
+            "conceptP3": { 
+                en: "Now, rephrase that exact same preference: <em>\"As long as the noodles are NOT spicy, OR they are NOT hot, I will eat them.\"</em><br>This translates to: <strong>(NOT A) OR (NOT B)</strong>. Logically, these two statements dictate the exact same eating behavior!", 
+                zh: "現在，換個方式表達完全相同的偏好：<em>「只要這碗麵『不辣』，或者它『不燙』，我就會吃。」</em><br>這轉譯為：<strong>(NOT A) OR (NOT B)</strong>。在邏輯上，這兩句話決定了完全相同的飲食行為！" 
+            },
+            "simTitle": { en: "Interactive Logic Simulator", zh: "互動邏輯模擬器 (Logic Simulator)" },
+            "simDesc": { 
+                en: "Toggle the inputs below and trace the logical flow. Green indicates True and Gray indicates False. Notice how the intermediate values change at each gate, yet the final outputs of both circuits always remain identical.", 
+                zh: "點擊切換下方的輸入狀態，並追蹤邏輯的流向。綠色代表 True (真)，灰色代表 False (假)。觀察中間數值在經過每個邏輯閘時的變化，你會發現無論如何，兩個電路的最終輸出永遠保持一致。" 
+            },
+            "simInputA": { en: "Input A (Spicy):", zh: "輸入 A (辣):" },
+            "simInputB": { en: "Input B (Hot):", zh: "輸入 B (燙):" },
+            "gateAnd": { en: "AND Gate", zh: "及閘 (AND Gate)" },
+            "gateNot": { en: "NOT", zh: "NOT" }, 
+            "gateOr": { en: "OR Gate", zh: "或閘 (OR Gate)" },
+            "output1Lbl": { en: "Output:<br>NOT (A AND B)", zh: "輸出 (Output):<br>NOT (A AND B)" },
+            "output2Lbl": { en: "Output:<br>(NOT A) OR (NOT B)", zh: "輸出 (Output):<br>(NOT A) OR (NOT B)" },
+            "misTitle": { en: "Common Misconception", zh: "常見迷思 (Misconceptions)" },
+            "misDesc": { 
+                en: "A frequent error is distributing the NOT operator directly without flipping the inner logic gate, mistakenly believing that \\(\\text{NOT}(A \\text{ AND } B)\\) equals \\((\\text{NOT } A) \\text{ AND } (\\text{NOT } B)\\). In our analogy, that would mean you only eat noodles that are <em>neither</em> spicy nor hot—which is much stricter than your actual rule!", 
+                zh: "一個常見的錯誤是直接將 NOT 運算符分配進去，而沒有反相內部的邏輯閘，錯誤地認為 \\(\\text{NOT}(A \\text{ AND } B)\\) 等同於 \\((\\text{NOT } A) \\text{ AND } (\\text{NOT } B)\\)。在我們的類比中，這意味著你只吃<em>既不辣也不燙</em>的麵——這比你原本的規則嚴格太多了！" 
+            },
+            "takeTitle": { en: "Key Takeaways", zh: "概念總結 (Key Takeaways)" },
+            "takeLi1": { 
+                en: "When you apply a NOT across an expression in parentheses, the logic operator flips (AND becomes OR, OR becomes AND).", 
+                zh: "當你將 NOT 應用於括號內的表達式時，邏輯運算符必須反相（AND 變成 OR，OR 變成 AND）。" 
+            },
+            "takeLi2": { 
+                en: "Logically equivalent expressions always produce the exact same Truth Table under all conditions.", 
+                zh: "邏輯上等價的表達式，在任何條件下都必然會產生完全相同的真值表 (Truth Table)。" 
+            },
+            "thinkTitle": { en: "Think & Link", zh: "思考與連結 (Think & Link)" },
+            "thinkQTitle": { en: "Question:", zh: "問題：" },
+            "thinkQ": { 
+                en: "If we apply the same rule to the second part of De Morgan's Law: what is the real-world equivalent of \\(\\text{NOT}(A \\text{ OR } B)\\)?", 
+                zh: "如果我們將相同的規則應用於德摩根定律的第二部分：\\(\\text{NOT}(A \\text{ OR } B)\\) 的現實生活情境是什麼？" 
+            },
+            "thinkATitle": { en: "Answer & Explanation:", zh: "答案與解析：" },
+            "thinkA": { 
+                en: "If you say, \"I refuse to eat noodles that are spicy OR hot\" \\(\\text{NOT}(A \\text{ OR } B)\\), you are a very picky eater. It means the noodles must be completely plain. Logically, the noodles must be NOT spicy AND NOT hot: \\((\\text{NOT } A) \\text{ AND } (\\text{NOT } B)\\). The OR flips to an AND!", 
+                zh: "如果你說：「我拒絕吃辣的『或』燙的麵」\\(\\text{NOT}(A \\text{ OR } B)\\)，代表你非常挑食。這意味著麵條必須完全清淡。在邏輯上，麵條必須是『不辣』且『不燙』：\\((\\text{NOT } A) \\text{ AND } (\\text{NOT } B)\\)。這裡的 OR 成功反相成了 AND！" 
+            },
+            "quizTitle": { en: "Self-Assessment Mini-Quiz", zh: "自我檢測 (Mini-Quiz)" },
+            "quizDesc": { 
+                en: "A smart home security system triggers an alarm (Output = True) if the door is open (A = True) AND the alarm is armed (B = True). The homeowner wants to write a rule for when the alarm is <strong>SILENT (Output = False)</strong>. <br><br>Draft your logical expression for the silent state using De Morgan's Law, and explain why it makes sense intuitively.", 
+                zh: "一個智能家居安全系統會在「大門開啟 (A = True)」且「防盜警報已啟動 (B = True)」時觸發警報 (輸出 = True)。屋主想為警報器<strong>保持靜音 (輸出 = False)</strong> 寫一個規則。<br><br>請使用德摩根定律草擬靜音狀態的邏輯表達式，並解釋為什麼這在直觀上是合理的。" 
+            },
+            "quizDraftLabel": { en: "Your Draft Workspace:", zh: "草稿與思考區：" },
+            "quizBtn": { en: "Compare with Answer", zh: "核對解析 (Compare with Answer)" },
+            "quizAnsTitle": { en: "Detailed Parsing:", zh: "詳細解析：" },
+            "quizAnsP": { 
+                en: "The alarm rings when <strong>A AND B</strong> is true. <br>Therefore, the alarm is silent when <strong>NOT (A AND B)</strong> is true.<br>According to De Morgan's Law, this is equivalent to <strong>(NOT A) OR (NOT B)</strong>.<br><br><strong>Intuitive meaning:</strong> The alarm stays silent as long as the door is closed (NOT A) <em>OR</em> the system is not armed (NOT B). If either of those safe conditions is met, the house is quiet.", 
+                zh: "當 <strong>A AND B</strong> 為真時，警報響起。<br>因此，當 <strong>NOT (A AND B)</strong> 為真時，警報保持靜音。<br>根據德摩根定律，這等同於 <strong>(NOT A) OR (NOT B)</strong>。<br><br><strong>直觀意義：</strong> 只要大門是關閉的 (NOT A) <em>或</em> 防盜系統未啟動 (NOT B)，警報就會保持靜音。只要滿足這兩個安全條件中的任何一個，屋子就是安靜的。" 
+            }
+        };
+
+        document.getElementById('langToggle').addEventListener('click', () => {
+            isEnglish = !isEnglish;
+            const lang = isEnglish ? 'en' : 'zh';
+            
+            // Toggle button text
+            document.getElementById('langText').innerText = isEnglish ? "繁體中文" : "English";
+            
+            // Update quiz placeholder
+            document.getElementById('quizDraft').placeholder = isEnglish ? "Draft your thoughts here before checking the answer..." : "在核對答案前，請先在此草擬你的邏輯推演...";
+
+            // Apply translations via data attributes
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18nData[key]) {
+                    el.innerHTML = i18nData[key][lang];
+                }
+            });
+
+            // Re-render MathJax
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+
+        // Initialize simulator state on load
+        updateSimulator();
+    </script>
+</body>
+</html>
